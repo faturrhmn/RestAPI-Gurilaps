@@ -120,7 +120,7 @@ router.post('/get-user', signupValidation, (req, res, next) => {
 
 });
 
-router.post('/data-asets', signupValidation, (req, res, next) => {
+router.post('/data-wisata', signupValidation, (req, res, next) => {
 
 
     if(
@@ -136,14 +136,14 @@ router.post('/data-asets', signupValidation, (req, res, next) => {
     const theToken = req.headers.authorization.split(' ')[1];
     const decoded = jwt.verify(theToken, 'the-super-strong-secrect');
 
-    db.query('SELECT * FROM data_asets', function (error, results, fields) {
+    db.query('SELECT * FROM wisata', function (error, results, fields) {
       if (error) throw error;
       return res.send({ error: false, data: results, message: 'Fetch Successfully.' });
   });
 });
 
-router.post('/public-data-asets', (req, res) => {
-  db.query('SELECT nama_asset, alamat, kota, kecamatan, kelurahan FROM data_asets', function (error, results, fields) {
+router.post('/public-data-wisata', (req, res) => {
+  db.query('SELECT * FROM wisata', function (error, results, fields) {
     if (error) {
       console.error('Error fetching data:', error);
       return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -152,8 +152,8 @@ router.post('/public-data-asets', (req, res) => {
   });
 });
 
-router.get('/public-data-asets', (req, res) => {
-  db.query('SELECT nama_asset, alamat, kota, kecamatan, kelurahan FROM data_asets', function (error, results, fields) {
+router.get('/public-data-wisata', (req, res) => {
+  db.query('SELECT * FROM wisata', function (error, results, fields) {
     if (error) {
       console.error('Error fetching data:', error);
       return res.status(500).json({ error: true, message: 'Internal Server Error' });
