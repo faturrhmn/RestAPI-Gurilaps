@@ -1,0 +1,25 @@
+# Dependensi yang diinstal
+/node_modules
+
+# Berkas log
+logs
+*.log
+
+# Berkas yang dihasilkan secara otomatis
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Berkas konfigurasi lokal
+.env
+
+# Berkas .DS_Store yang dihasilkan oleh macOS
+.DS_Store
+
+# Berkas yang dihasilkan oleh editor atau IDE
+.vscode/
+.idea/
+
+# Berkas yang dihasilkan oleh sistem operasi
+Thumbs.db
