@@ -4,7 +4,8 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const indexRouter = require('./routes/wisataRoutes.js');
+const wisataRouter = require('./routes/wisataRoutes.js');
+const ulasanRouter = require('./routes/ulasanRoutes.js');
 
 const app = express();
 
@@ -18,7 +19,8 @@ app.use(bodyParser.urlencoded({
 
 app.use(cors());
 
-app.use('/api', indexRouter);
+app.use('/api', wisataRouter);
+app.use('/ulasan', ulasanRouter);
 
 app.use((err, req, res, next) => {
     console.log(err);

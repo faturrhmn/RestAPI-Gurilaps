@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const wisataController = require('../controllers/wisataController');
-const { verifyToken } = require('../middlewares/authMiddleware');
 
 router.get('/public-data-wisata', wisataController.getPublicData);
 router.get('/public-data-wisata/:id', wisataController.getPublicDataById);
