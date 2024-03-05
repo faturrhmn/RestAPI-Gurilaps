@@ -162,5 +162,47 @@ router.get('/public-data-wisata', (req, res) => {
   });
 });
 
+router.get('/public-data-wisata/:id', (req, res) => {
+  const id = req.params.id;
+  db.query('SELECT * FROM wisata WHERE id = ?', id, function (error, results, fields) {
+    if (error) {
+      console.error('Error fetching data:', error);
+      return res.status(500).json({ error: true, message: 'Internal Server Error' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: true, message: 'Data not found' });
+    }
+    return res.json({ error: false, data: results[0], message: 'Data retrieved successfully.' });
+  });
+});
+
+router.post('/add-data-wisata', (req, res) => {
+  const { nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar } = req.body;
+  db.query('INSERT INTO wisata (nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+      [nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar], 
+      function (error, results, fields) {
+          if (error) {
+              console.error('Error creating wisata:', error);
+              return res.status(500).json({ error: true, message: 'Internal Server Error' });
+          }
+          return res.status(201).json({ error: false, message: 'Wisata created successfully.' });
+  });
+});
+
+router.delete('/delete-data-wisata/:id', (req, res) => {
+  const id = req.params.id;
+  db.query('DELETE FROM wisata WHERE id = ?', id, function (error, results, fields) {
+    if (error) {
+      console.error('Error deleting wisata:', error);
+      return res.status(500).json({ error: true, message: 'Internal Server Error' });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: true, message: 'Wisata not found' });
+    }
+    return res.json({ error: false, message: 'Wisata deleted successfully.' });
+  });
+});
+
+
 
 module.exports = router;
