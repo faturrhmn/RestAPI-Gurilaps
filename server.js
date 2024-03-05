@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const wisataRouter = require('./routes/wisataRoutes.js');
 const ulasanRouter = require('./routes/ulasanRoutes.js');
+const authRouter = require('./routes/authRoutes.js');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(cors());
 
 app.use('/api', wisataRouter);
 app.use('/ulasan', ulasanRouter);
+app.use('/auth', authRouter);
 
 app.use((err, req, res, next) => {
     console.log(err);

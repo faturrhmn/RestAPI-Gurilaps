@@ -1,92 +1,29 @@
-const db = require('../dbConnection');
-const bcrypt = require('bcryptjs');
+const axios = require('axios');
+const dbConfig = require('../dbConnection'); 
 const jwt = require('jsonwebtoken');
 
-exports.register = (req, res, next) => {
-  const { name, email, password } = req.body;
-
-  // Cek apakah email sudah terdaftar
-  db.query(
-    `SELECT * FROM users WHERE LOWER(email) = LOWER(${db.escape(email)});`,
-    (err, result) => {
-      if (result.length) {
-        return res.status(409).send({
-          msg: 'This email is already in use!'
-        });
+exports.googleAuth = async (req, res) => {
+    const { token } = req.body;
+    try {
+      const response = await axios.get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`);
+      const data = response.data;
+      // Check if user exists in your database
+      const userQuery = "SELECT * FROM users WHERE google_id = ?";
+      const result = await dbConfig.query(userQuery, [data.sub]);
+      let user = result[0]; // Adjust based on your DB library's response structure
+      let userId;
+      if (!user || user.length === 0) {
+        // If user does not exist, create a new user record
+        const insertQuery = "INSERT INTO users (google_id, email, name, picture) VALUES (?, ?, ?, ?)";
+        const insertResult = await dbConfig.query(insertQuery, [data.sub, data.email, data.name, data.picture]);
+        userId = insertResult.insertId; // Adjust based on your DB library's response structure
       } else {
-        // Hash password
-        bcrypt.hash(password, 10, (err, hash) => {
-          if (err) {
-            return res.status(500).send({
-              msg: 'Error hashing password'
-            });
-          } else {
-            // Tambahkan user ke database
-            db.query(
-              `INSERT INTO users (name, email, password) VALUES (${db.escape(
-                name
-              )}, ${db.escape(email)}, ${db.escape(hash)})`,
-              (err, result) => {
-                if (err) {
-                  return res.status(400).send({
-                    msg: 'Error registering user'
-                  });
-                }
-                return res.status(201).send({
-                  msg: 'User registered successfully'
-                });
-              }
-            );
-          }
-        });
+        userId = user[0].id; // Adjust if necessary based on your DB library's response structure
       }
+      // Issue JWT token
+      const jwtToken = jwt.sign({ userId: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      res.status(200).json({ message: "Authentication successful", token: jwtToken });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid token", error: error.response ? error.response.data : error.message });
     }
-  );
-};
-
-exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  // Cek apakah user dengan email yang diberikan ada
-  db.query(
-    `SELECT * FROM users WHERE email = ${db.escape(email)};`,
-    (err, result) => {
-      if (err) {
-        return res.status(400).send({
-          msg: 'Error checking user'
-        });
-      }
-      if (!result.length) {
-        return res.status(401).send({
-          msg: 'Email or password is incorrect!'
-        });
-      }
-
-      // Bandingkan password yang dihash dengan password yang dimasukkan
-      bcrypt.compare(password, result[0].password, (bErr, bResult) => {
-        if (bErr || !bResult) {
-          return res.status(401).send({
-            msg: 'Email or password is incorrect!'
-          });
-        }
-
-        // Buat token JWT
-        const token = jwt.sign(
-          {
-            id: result[0].id,
-            email: result[0].email
-          },
-          'secret_key',
-          {
-            expiresIn: '1h'
-          }
-        );
-
-        return res.status(200).send({
-          msg: 'Logged in successfully!',
-          token
-        });
-      });
-    }
-  );
 };
