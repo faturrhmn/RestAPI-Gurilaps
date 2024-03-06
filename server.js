@@ -7,6 +7,7 @@ const cors = require('cors');
 const wisataRouter = require('./routes/wisataRoutes.js');
 const ulasanRouter = require('./routes/ulasanRoutes.js');
 const authRouter = require('./routes/authRoutes.js');
+require('dotenv').config();
 
 const app = express();
 
