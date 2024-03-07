@@ -1,7 +1,7 @@
 const db = require('../dbConnection');
 
 exports.getAllUlasan = (req, res) => {
-    db.query('SELECT ulasan.*, wisata.nama_wisat FROM ulasan JOIN wisata ON ulasan.wisata_id = wisata.id', (error, results, fields) => {
+    db.query('SELECT ulasan.*, wisata.nama_wisat FROM ulasan JOIN wisata ON ulasan.wisata_id = wisata.id_wisata', (error, results, fields) => {
         if (error) {
             console.error('Error fetching data:', error);
             return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -12,7 +12,7 @@ exports.getAllUlasan = (req, res) => {
 
 exports.getUlasanById = (req, res) => {
     const id = req.params.id;
-    db.query('SELECT u.*, w.nama_wisat AS nama_wisata FROM ulasan u INNER JOIN wisata w ON u.wisata_id = w.id WHERE u.id = ?', id, (error, results, fields) => {
+    db.query('SELECT u.*, w.nama_wisat AS nama_wisata FROM ulasan u INNER JOIN wisata w ON u.wisata_id = w.id_wisata WHERE u.wisata_id = ?', id, (error, results, fields) => {
         if (error) {
             console.error('Error fetching data:', error);
             return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -41,7 +41,7 @@ exports.addUlasan = (req, res) => {
 
 exports.deleteUlasan = (req, res) => {
     const id = req.params.id;
-    db.query('DELETE FROM ulasan WHERE id = ?', id, (error, results, fields) => {
+    db.query('DELETE FROM ulasan WHERE id_ulasan = ?', id, (error, results, fields) => {
         if (error) {
             console.error('Error deleting data:', error);
             return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -62,7 +62,7 @@ exports.updateUlasan = async (req, res) => {
             return res.status(400).json({ error: true, message: 'No fields to update' });
         }
 
-        const result = await db.query('UPDATE ulasan SET ? WHERE id = ?', [updateFields, id]);
+        const result = await db.query('UPDATE ulasan SET ? WHERE id_ulasan = ?', [updateFields, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: 'Data not found' });

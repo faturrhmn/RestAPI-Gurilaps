@@ -14,7 +14,7 @@ exports.getPublicData = (req, res) => {
 exports.getPublicDataById = (req, res) => {
   const id = req.params.id;
   // Mendapatkan data wisata publik berdasarkan ID
-  db.query('SELECT * FROM wisata WHERE id = ?', id, (error, results, fields) => {
+  db.query('SELECT * FROM wisata WHERE id_wisata = ?', id, (error, results, fields) => {
     if (error) {
       console.error('Error fetching data:', error);
       return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -27,11 +27,11 @@ exports.getPublicDataById = (req, res) => {
 };
 
 exports.addData = (req, res) => {
-  const { nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar } = req.body;
+  const { nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar, kategori } = req.body;
   // Menambahkan data wisata baru
   db.query(
-    'INSERT INTO wisata (nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar],
+    'INSERT INTO wisata (nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar, kategori],
     (error, results, fields) => {
       if (error) {
         console.error('Error adding data:', error);
@@ -45,7 +45,7 @@ exports.addData = (req, res) => {
 exports.deleteData = (req, res) => {
   const id = req.params.id;
   // Menghapus data wisata berdasarkan ID
-  db.query('DELETE FROM wisata WHERE id = ?', id, (error, results, fields) => {
+  db.query('DELETE FROM wisata WHERE id_wisata = ?', id, (error, results, fields) => {
     if (error) {
       console.error('Error deleting data:', error);
       return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -67,7 +67,7 @@ exports.updateData = async (req, res) => {
     }
 
     // Memperbarui data wisata berdasarkan ID
-    const result = await db.query('UPDATE wisata SET ? WHERE id = ?', [updateFields, id]);
+    const result = await db.query('UPDATE wisata SET ? WHERE id_wisata = ?', [updateFields, id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: true, message: 'Data not found' });

@@ -7,6 +7,8 @@ const cors = require('cors');
 const wisataRouter = require('./routes/wisataRoutes.js');
 const ulasanRouter = require('./routes/ulasanRoutes.js');
 const authRouter = require('./routes/authRoutes.js');
+const eventRouter = require('./routes/eventRoutes.js');
+const artikelRouter = require('./routes/artikelRoutes.js');
 require('dotenv').config();
 
 const app = express();
@@ -24,6 +26,8 @@ app.use(cors());
 app.use('/api', wisataRouter);
 app.use('/ulasan', ulasanRouter);
 app.use('/auth', authRouter);
+app.use('/event', eventRouter);
+app.use('/artikel', artikelRouter);
 
 app.use((err, req, res, next) => {
     console.log(err);
