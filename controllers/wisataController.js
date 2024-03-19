@@ -13,8 +13,7 @@ exports.getPublicData = (req, res) => {
 
 exports.getPublicDataById = (req, res) => {
   const id = req.params.id;
-  // Mendapatkan data wisata publik berdasarkan ID
-  db.query('SELECT * FROM wisata WHERE id_wisata = ?', id, (error, results, fields) => {
+  db.query('SELECT wisata.* FROM wisata WHERE wisata.id_wisata = ?', id, (error, results, fields) => {
     if (error) {
       console.error('Error fetching data:', error);
       return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -27,11 +26,11 @@ exports.getPublicDataById = (req, res) => {
 };
 
 exports.addData = (req, res) => {
-  const { nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar, kategori } = req.body;
+  const { nama_wisata, lat, lon, kelurahan, kecamatan, kab_kota, alamat, kategori } = req.body;
   // Menambahkan data wisata baru
   db.query(
-    'INSERT INTO wisata (nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [nama_wisat, lat, lon, desa, kec, kab, alamat, rating_awal, deskripsi, gambar, kategori],
+    'INSERT INTO wisata (nama_wisata, lat, lon, kelurahan, kecamatan, kab_kota, alamat, kategori) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [nama_wisata, lat, lon, kelurahan, kecamatan, kab_kota, alamat, kategori],
     (error, results, fields) => {
       if (error) {
         console.error('Error adding data:', error);
