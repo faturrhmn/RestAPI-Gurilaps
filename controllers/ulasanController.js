@@ -1,7 +1,7 @@
 const db = require('../dbConnection');
 
 exports.getAllUlasan = (req, res) => {
-    db.query('SELECT ulasan.*, wisata.nama_wisat FROM ulasan JOIN wisata ON ulasan.wisata_id = wisata.id_wisata', (error, results, fields) => {
+    db.query('SELECT ulasan.*, wisata.nama_wisata FROM ulasan LEFT JOIN wisata ON ulasan.id_wisata = wisata.id_wisata', (error, results, fields) => {
         if (error) {
             console.error('Error fetching data:', error);
             return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -12,7 +12,7 @@ exports.getAllUlasan = (req, res) => {
 
 exports.getUlasanById = (req, res) => {
     const id = req.params.id;
-    db.query('SELECT u.*, w.nama_wisat AS nama_wisata FROM ulasan u INNER JOIN wisata w ON u.wisata_id = w.id_wisata WHERE u.wisata_id = ?', id, (error, results, fields) => {
+    db.query('SELECT u.*, w.nama_wisata AS nama_wisata FROM ulasan u INNER JOIN wisata w ON u.id_wisata = w.id_wisata WHERE u.id_wisata = ?', id, (error, results, fields) => {
         if (error) {
             console.error('Error fetching data:', error);
             return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -25,10 +25,10 @@ exports.getUlasanById = (req, res) => {
 };
 
 exports.addUlasan = (req, res) => {
-    const { wisata_id, deskripsi, rating, gambar } = req.body;
+    const { id_wisata, id_user, deskripsi, rating } = req.body;
     db.query(
-        'INSERT INTO ulasan (wisata_id, deskripsi, rating, gambar) VALUES (?, ?, ?, ?)',
-        [wisata_id, deskripsi, rating, gambar],
+        'INSERT INTO ulasan (id_wisata, id_user, deskripsi, rating) VALUES (?, ?, ?, ?)',
+        [id_wisata, id_user, deskripsi, rating],
         (error, results, fields) => {
             if (error) {
                 console.error('Error adding data:', error);

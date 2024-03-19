@@ -2,7 +2,7 @@ const db = require('../dbConnection');
 
 exports.getAllevent = (req, res) => {
     // Mendapatkan data event publik
-    db.query('SELECT * FROM event', (error, results, fields) => {
+    db.query('SELECT * FROM events', (error, results, fields) => {
       if (error) {
         console.error('Error fetching data:', error);
         return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -14,7 +14,7 @@ exports.getAllevent = (req, res) => {
 exports.geteventById = (req, res) => {
     const id = req.params.id;
     // Mendapatkan data event publik berdasarkan ID
-    db.query('SELECT * FROM event WHERE id_event = ?', id, (error, results, fields) => {
+    db.query('SELECT * FROM events WHERE id_event = ?', id, (error, results, fields) => {
       if (error) {
         console.error('Error fetching data:', error);
         return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -27,11 +27,11 @@ exports.geteventById = (req, res) => {
 };
 
 exports.addevent = (req, res) => {
-    const { nama, tanggal, lokasi, deskripsi } = req.body;
+    const { id_admin, nama, tanggal, lokasi, deskripsi } = req.body;
     // Menambahkan data event baru
     db.query(
-      'INSERT INTO event (nama, tanggal, lokasi, deskripsi) VALUES (?, ?, ?, ?)',
-      [nama, tanggal, lokasi, deskripsi],
+      'INSERT INTO events (id_admin, nama, tanggal, lokasi, deskripsi) VALUES (?, ?, ?, ?, ?)',
+      [id_admin, nama, tanggal, lokasi, deskripsi],
       (error, results, fields) => {
         if (error) {
           console.error('Error adding data:', error);
@@ -45,7 +45,7 @@ exports.addevent = (req, res) => {
 exports.deleteevent = (req, res) => {
     const id = req.params.id;
     // Menghapus data event berdasarkan ID
-    db.query('DELETE FROM event WHERE id_event = ?', id, (error, results, fields) => {
+    db.query('DELETE FROM events WHERE id_event = ?', id, (error, results, fields) => {
       if (error) {
         console.error('Error deleting data:', error);
         return res.status(500).json({ error: true, message: 'Internal Server Error' });
@@ -67,7 +67,7 @@ exports.updateevent = async (req, res) => {
       }
   
       // Memperbarui data event berdasarkan ID
-      const result = await db.query('UPDATE event SET ? WHERE id_event = ?', [updateFields, id]);
+      const result = await db.query('UPDATE events SET ? WHERE id_event = ?', [updateFields, id]);
   
       if (result.affectedRows === 0) {
         return res.status(404).json({ error: true, message: 'Data not found' });

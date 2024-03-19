@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const wisataController = require('../controllers/wisataController');
 
-router.get('/public-data-wisata', wisataController.getPublicData);
-router.get('/public-data-wisata/:id', wisataController.getPublicDataById);
+router.post('/public-data-wisata', wisataController.getPublicData);
+router.post('/public-data-wisata/:id', wisataController.getPublicDataById);
 router.post('/add-data-wisata', wisataController.addData);
-router.delete('/delete-data-wisata/:id', wisataController.deleteData);
-router.put('/update-data-wisata/:id', wisataController.updateData);
+router.post('/delete-data-wisata/:id', wisataController.deleteData);
+router.post('/update-data-wisata/:id', wisataController.updateData);
 
 module.exports = router;
